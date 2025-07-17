@@ -16,3 +16,4 @@ This tool creates structured folders for VFX departments like roto, comp, paint,
 4. Folders will be generated with substructure (mid, out)
 
 🧑‍💻 Developed with ❤️ by Karthick Annadurai# Vfx-folder-tool
+mail id karthickatmill@gmail.com
