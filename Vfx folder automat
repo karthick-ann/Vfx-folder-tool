@@ -1,0 +1,205 @@
+import os
+import tkinter as tk
+from tkinter import ttk, messagebox, filedialog
+from datetime import datetime
+
+# === FUNCTION TO BROWSE DIRECTORY ===
+def browse_directory():
+    selected = filedialog.askdirectory()
+    if selected:
+        base_dir_var.set(selected)
+
+# === FUNCTION TO FIND NEXT VERSION ===
+def get_next_version(base_path, shot, app):
+    version = 1
+    while True:
+        shot_folder_name = f"{shot}_{app}_v{version:02}"
+        full_path = os.path.join(base_path, shot_folder_name)
+        if not os.path.exists(full_path):
+            return f"v{version:02}", full_path
+        version += 1
+
+# === FUNCTION TO CREATE FOLDER STRUCTURE ===
+def create_folders():
+    base_dir = base_dir_var.get().strip()
+    show = show_entry.get().strip()
+    shot_input = shot_entry.get().strip()
+    app = selected_app.get().strip()
+
+    if not all([base_dir, show, shot_input, app]):
+        messagebox.showerror("Error", "Please fill in all fields.")
+        return
+
+    shot_list = [s.strip() for s in shot_input.split(",") if s.strip()]
+    if not shot_list:
+        messagebox.showerror("Error", "Please enter at least one valid shot name.")
+        return
+
+    created_folders = []
+
+    for shot in shot_list:
+        show_path = os.path.join(base_dir, show)
+        os.makedirs(show_path, exist_ok=True)
+
+        version, full_path = get_next_version(show_path, shot, app)
+
+        # Create mid subfolders
+        mid_path = os.path.join(full_path, "mid")
+        for sub in ["IDN", "render", "sfx", "nuke"]:
+            os.makedirs(os.path.join(mid_path, sub), exist_ok=True)
+
+        # Create out folder
+        os.makedirs(os.path.join(full_path, "out"), exist_ok=True)
+
+        # Log file
+        log_path = os.path.join(full_path, "creation_log.txt")
+        with open(log_path, "w") as log:
+            log.write(f"Tool: VFX Folder Tool - Created by Karthick Annadurai\n")
+            log.write(f"Created on: {datetime.now()}\n")
+            log.write(f"Structure for: {shot}_{app}_{version}\n")
+            log.write("├── mid/IDN, render, sfx, nuke\n")
+            log.write("└── out/\n")
+
+        created_folders.append(os.path.basename(full_path))
+
+    messagebox.showinfo("Success", f"✅ Created {len(created_folders)} shot folder(s):\n" + "\n".join(created_folders))
+
+# === GUI SETUP ===
+root = tk.Tk()
+root.title("VFX Folder Tool - Created by Karthick Annadurai")
+root.geometry("400x420")
+root.resizable(False, False)
+
+available_apps = ["roto", "paint", "comp", "prep"]
+
+# --- Base Directory ---
+base_dir_var = tk.StringVar()
+ttk.Label(root, text="Base Directory:").pack(pady=5)
+base_dir_frame = ttk.Frame(root)
+base_dir_frame.pack(padx=10)
+ttk.Entry(base_dir_frame, textvariable=base_dir_var, width=35).pack(side="left", fill="x", expand=True)
+ttk.Button(base_dir_frame, text="Browse", command=browse_directory).pack(side="right")
+
+# --- Show Name ---
+ttk.Label(root, text="Show Name:").pack(pady=5)
+show_entry = ttk.Entry(root, width=40)
+show_entry.pack()
+
+# --- Shot Names ---
+ttk.Label(root, text="Shot Name(s) (comma separated):").pack(pady=5)
+shot_entry = ttk.Entry(root, width=40)
+shot_entry.pack()
+
+# --- Department ---
+ttk.Label(root, text="Select Department:").pack(pady=5)
+selected_app = tk.StringVar()
+app_dropdown = ttk.Combobox(root, textvariable=selected_app, values=available_apps, state="readonly")
+app_dropdown.pack()
+app_dropdown.current(0)
+
+# --- Create Button ---
+ttk.Button(root, text="Create Folder Structure", command=create_folders).pack(pady=25)
+
+root.mainloop()import os
+import tkinter as tk
+from tkinter import ttk, messagebox, filedialog
+from datetime import datetime
+
+# === FUNCTION TO BROWSE DIRECTORY ===
+def browse_directory():
+    selected = filedialog.askdirectory()
+    if selected:
+        base_dir_var.set(selected)
+
+# === FUNCTION TO FIND NEXT VERSION ===
+def get_next_version(base_path, shot, app):
+    version = 1
+    while True:
+        shot_folder_name = f"{shot}_{app}_v{version:02}"
+        full_path = os.path.join(base_path, shot_folder_name)
+        if not os.path.exists(full_path):
+            return f"v{version:02}", full_path
+        version += 1
+
+# === FUNCTION TO CREATE FOLDER STRUCTURE ===
+def create_folders():
+    base_dir = base_dir_var.get().strip()
+    show = show_entry.get().strip()
+    shot_input = shot_entry.get().strip()
+    app = selected_app.get().strip()
+
+    if not all([base_dir, show, shot_input, app]):
+        messagebox.showerror("Error", "Please fill in all fields.")
+        return
+
+    shot_list = [s.strip() for s in shot_input.split(",") if s.strip()]
+    if not shot_list:
+        messagebox.showerror("Error", "Please enter at least one valid shot name.")
+        return
+
+    created_folders = []
+
+    for shot in shot_list:
+        show_path = os.path.join(base_dir, show)
+        os.makedirs(show_path, exist_ok=True)
+
+        version, full_path = get_next_version(show_path, shot, app)
+
+        # Create mid subfolders
+        mid_path = os.path.join(full_path, "mid")
+        for sub in ["IDN", "render", "sfx", "nuke"]:
+            os.makedirs(os.path.join(mid_path, sub), exist_ok=True)
+
+        # Create out folder
+        os.makedirs(os.path.join(full_path, "out"), exist_ok=True)
+
+        # Log file
+        log_path = os.path.join(full_path, "creation_log.txt")
+        with open(log_path, "w") as log:
+            log.write(f"Tool: VFX Folder Tool - Created by Karthick Annadurai\n")
+            log.write(f"Created on: {datetime.now()}\n")
+            log.write(f"Structure for: {shot}_{app}_{version}\n")
+            log.write("├── mid/IDN, render, sfx, nuke\n")
+            log.write("└── out/\n")
+
+        created_folders.append(os.path.basename(full_path))
+
+    messagebox.showinfo("Success", f"✅ Created {len(created_folders)} shot folder(s):\n" + "\n".join(created_folders))
+
+# === GUI SETUP ===
+root = tk.Tk()
+root.title("VFX Folder Tool - Created by Karthick Annadurai")
+root.geometry("400x420")
+root.resizable(False, False)
+
+available_apps = ["roto", "paint", "comp", "prep"]
+
+# --- Base Directory ---
+base_dir_var = tk.StringVar()
+ttk.Label(root, text="Base Directory:").pack(pady=5)
+base_dir_frame = ttk.Frame(root)
+base_dir_frame.pack(padx=10)
+ttk.Entry(base_dir_frame, textvariable=base_dir_var, width=35).pack(side="left", fill="x", expand=True)
+ttk.Button(base_dir_frame, text="Browse", command=browse_directory).pack(side="right")
+
+# --- Show Name ---
+ttk.Label(root, text="Show Name:").pack(pady=5)
+show_entry = ttk.Entry(root, width=40)
+show_entry.pack()
+
+# --- Shot Names ---
+ttk.Label(root, text="Shot Name(s) (comma separated):").pack(pady=5)
+shot_entry = ttk.Entry(root, width=40)
+shot_entry.pack()
+
+# --- Department ---
+ttk.Label(root, text="Select Department:").pack(pady=5)
+selected_app = tk.StringVar()
+app_dropdown = ttk.Combobox(root, textvariable=selected_app, values=available_apps, state="readonly")
+app_dropdown.pack()
+app_dropdown.current(0)
+
+# --- Create Button ---
+ttk.Button(root, text="Create Folder Structure", command=create_folders).pack(pady=25)
+
+root.mainloop()
